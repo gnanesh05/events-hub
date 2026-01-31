@@ -55,6 +55,12 @@ BookingSchema.pre('save', async function (this: IBooking) {
 
 // Index on eventId for faster queries (already added in schema, but explicit for clarity)
 BookingSchema.index({ eventId: 1 });
+// Index on eventId and createdAt for faster queries
+BookingSchema.index({eventId:1, createdAt:-1});
+// Index on email for faster queries
+BookingSchema.index({ email: 1 });
+// Index on eventId and email for faster queries
+BookingSchema.index({ eventId: 1, email: 1 }, { unique: true, name: 'eventId_email_unique' });
 
 /**
  * Booking model

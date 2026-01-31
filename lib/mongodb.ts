@@ -17,9 +17,6 @@ declare global {
  */
 const MONGODB_URI: string = process.env.MONGODB_URI || 'mongodb://localhost:27017/event-management';
 
-if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
-}
 
 /**
  * Cached connection object to prevent multiple connections during development
@@ -44,6 +41,11 @@ if (!global.mongoose) {
  * @throws {Error} If the connection fails
  */
 async function connectDB(): Promise<Mongoose> {
+  // Validate MongoDB URI
+  if (!MONGODB_URI) {
+    throw new Error('Please define the MONGODB_URI environment variable inside .env.local');
+  }
+
   // If we already have a cached connection, return it immediately
   if (cached.conn) {
     return cached.conn;
@@ -51,32 +53,33 @@ async function connectDB(): Promise<Mongoose> {
 
   // If we don't have a connection promise, create one
   if (!cached.promise) {
-    const opts: mongoose.ConnectOptions = {
-      bufferCommands: false, // Disable mongoose buffering
-    };
+    try {
+      const opts: mongoose.ConnectOptions = {
+        bufferCommands: false, // Disable mongoose buffering
+      };
 
-    // Create the connection promise
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance: Mongoose) => {
-      console.log('✅ MongoDB connected successfully');
-      return mongooseInstance;
-    }).catch((error: Error) => {
-      console.error('❌ MongoDB connection error:', error);
+      // Create the connection promise
+      cached.promise = mongoose.connect(MONGODB_URI, opts);
+    } catch (error) {
       // Reset the promise on error so we can retry
       cached.promise = null;
-      throw error;
-    });
+      console.error('❌ MongoDB connection error:', error);
+      throw error instanceof Error ? error : new Error('Failed to create MongoDB connection');
+    }
   }
 
   try {
     // Wait for the connection promise to resolve
     cached.conn = await cached.promise;
+    console.log('✅ MongoDB connected successfully');
+    return cached.conn;
   } catch (error) {
-    // Reset the promise on error
+    // Reset the promise on error so we can retry
     cached.promise = null;
-    throw error;
+    cached.conn = null;
+    console.error('❌ MongoDB connection error:', error);
+    throw error instanceof Error ? error : new Error('Failed to connect to MongoDB');
   }
-
-  return cached.conn;
 }
 
 /**

@@ -1,6 +1,9 @@
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import BookEvent from '@/components/ui/BookEvent';
+import { getSimilarEventsBySlug } from '@/lib/actions/event.actions';
+import { IEvent } from '@/database/event.model';
+import EventCard from '@/components/ui/EventCard';
 
 const EventDetailItem = ({icon, label, alt}:{icon:string, label:string, alt:string}) => {
   return (
@@ -63,8 +66,8 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
   }
  
   const {description,title,image, overview, location,date,time, mode, audience, agenda, organizer, tags}= event;
+  const similarEvents :IEvent[] = await getSimilarEventsBySlug(slug);
   const booking = 10;
-  
   return (
     <section id="event">
       <div className="header">
@@ -89,14 +92,14 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
               <EventDetailItem icon="/icons/audience.svg" label={audience} alt="audience" />
 
             </section>
-            <EventAgenda agendaItems={JSON.parse(agenda[0])} />
+            <EventAgenda agendaItems={agenda} />
 
             <section className="flex-col-gap-2">
               <h2>About theOrganizer</h2>
               <p>{organizer}</p>
             </section>
 
-            <EventTags tags={JSON.parse(tags[0])} />
+            <EventTags tags={tags} />
         </div>
         <aside className="booking">
           <div className="signup-card">
@@ -116,6 +119,16 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
           </div>
         </aside>
       </div>
+     <div className="flex w-full flex-col gap-4 pt-20">
+      <h2>Similar Events</h2>
+      <div className="events">
+        {
+          similarEvents.length > 0 && similarEvents.map((event:IEvent)=>(
+            <EventCard key={event._id.toString()} title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} />
+          ))
+        }
+      </div>
+     </div>
     </section>
   )
 }

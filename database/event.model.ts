@@ -224,8 +224,7 @@ EventSchema.pre('save', function (this: IEvent) {
   }
 });
 
-// Create unique index on slug for faster lookups and uniqueness enforcement
-EventSchema.index({ slug: 1 }, { unique: true });
+// Note: Unique index on slug is already created by the schema definition (unique: true)
 
 /**
  * Event model

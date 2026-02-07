@@ -6,4 +6,7 @@ posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
   defaults: '2025-11-30',
   capture_exceptions: true,
   debug: process.env.NODE_ENV === "development",
+  // Disable session recording to prevent performance issues
+  disable_session_recording: true,
+  autocapture: false,
 });

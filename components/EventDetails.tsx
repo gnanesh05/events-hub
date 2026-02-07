@@ -65,9 +65,9 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
       return notFound();
     }
    
-    const {description,title,image, overview, location,date,time, mode, audience, agenda, organizer, tags}= event;
+    const {description,title,image, overview, location,date,time, mode, audience, agenda, organizer, tags, bookingSlots, slotsBooked}= event;
     const similarEvents :IEvent[] = await getSimilarEventsBySlug(slug);
-    const booking = 10;
+    const isBookingOpen = bookingSlots > slotsBooked && slotsBooked > 0;
     return (
       <section id="event">
         <div className="header">
@@ -105,9 +105,9 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
             <div className="signup-card">
               <h2>Book Your Spot</h2>
               {
-                booking > 0 ? (
+                isBookingOpen ? (
                   <p className="text-sm">
-                    Join {booking} other people who have already registered for this event.
+                    Join {slotsBooked} other people who have already registered for this event.
                   </p>
                 ) : (
                   <p className="text-sm">

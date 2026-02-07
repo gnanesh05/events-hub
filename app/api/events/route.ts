@@ -21,7 +21,8 @@ export async function POST(req:NextRequest) {
         }
         const tags = JSON.parse(formData.get('tags') as string);
         const agenda = JSON.parse(formData.get('agenda') as string);
-
+        const bookingSlots = parseInt(formData.get('bookingSlots') as string || '0');
+        const slotsBooked = parseInt(formData.get('slotsBooked') as string || '0');
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
 
@@ -37,7 +38,24 @@ export async function POST(req:NextRequest) {
             }).end(buffer);
         });
         event.image = (uploadResult as { secure_url: string }).secure_url;
-        const newEvent = await Event.create({...event, tags:tags, agenda:agenda});
+        const eventData = {
+            title: event.title as string,
+            description: event.description as string,
+            overview: event.overview as string,
+            image: event.image as string,
+            venue: event.venue as string,
+            location: event.location as string,
+            date: event.date as string,
+            time: event.time as string,
+            mode: event.mode as string,
+            audience: event.audience as string,
+            organizer: (event.organizer || event.organiser) as string,
+            tags: tags,
+            agenda: agenda,
+            bookingSlots: bookingSlots,
+            slotsBooked: slotsBooked,    
+          };
+        const newEvent = await Event.create(eventData);
         return NextResponse.json({ message: 'Event created successfully' , event: newEvent}, { status: 201 });
     }
    

@@ -28,8 +28,7 @@ export default function RootLayout({
       <body
         className={`${schibstedGrotesk.variable} ${martianMono.variable} min-h-screen  antialiased`}
       >
-        <Navbar />
-        <div className="absolute inset-0 top-0 z-[-1] min-h-screen">
+        <div className="fixed inset-0 z-0 h-screen w-screen">
           <Prism
             animationType="rotate"
             timeScale={0.5}
@@ -42,9 +41,12 @@ export default function RootLayout({
             glow={0.4}
           />
         </div>
-        <main>
-          {children}
-        </main>
+        <div className="relative z-10">
+          <Navbar />
+          <main>
+            {children}
+          </main>
+        </div>
       </body>
     </html>
   );

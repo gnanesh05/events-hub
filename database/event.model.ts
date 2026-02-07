@@ -18,6 +18,8 @@ export interface IEvent extends Document {
   agenda: string[];
   organizer: string;
   tags: string[];
+  bookingSlots: number;
+  slotsBooked: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -138,6 +140,14 @@ const EventSchema: Schema<IEvent> = new Schema<IEvent>(
         validator: (value: string[]) => Array.isArray(value) && value.length > 0,
         message: 'Tags must be a non-empty array',
       },
+    },
+    bookingSlots: {
+      type: Number,
+      required: [true, 'Booking slots are required'],
+    },
+    slotsBooked: {
+      type: Number,
+      required: [true, 'Slots booked are required'],
     },
   },
   {

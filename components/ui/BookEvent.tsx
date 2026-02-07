@@ -11,7 +11,7 @@ const BookEvent = ({eventId, slug}:{eventId:string, slug:string}) => {
 
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const {success} = await bookEvent(eventId, slug, email);
+        const {success, message} = await bookEvent(eventId, slug, email);
         if(success){
             setSubmitted(true);
             posthog.capture('event_booked', {
@@ -21,8 +21,8 @@ const BookEvent = ({eventId, slug}:{eventId:string, slug:string}) => {
             });
         }
         else{
-            console.error('Error booking event');
-            posthog.captureException('Error booking event');
+            console.error(message);
+            posthog.captureException(message);
         }
     }
   return (

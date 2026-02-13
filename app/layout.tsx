@@ -3,6 +3,7 @@ import { Schibsted_Grotesk, Martian_Mono } from "next/font/google";
 import Prism from "@/components/ui/Prism/Prism";
 import "./globals.css";
 import Navbar from "@/components/ui/Navbar";
+
 const schibstedGrotesk = Schibsted_Grotesk({
   variable: "--font-schibsted-grotesk",
   subsets: ["latin"],

@@ -1,4 +1,5 @@
 "use server";
+import { headers } from "next/headers";
 import { auth } from "../auth";
 import { z } from "zod";
 
@@ -63,15 +64,15 @@ export const signUp = async(prevState: SignUpState, formData: FormData): Promise
     }
     const { email, password, username, role } = result.data;
     try{
-    const user = await auth.api.signUpEmail({
+    await auth.api.signUpEmail({
         body: {
             email,
             password,
             name: username,
             role: role,
         },
+        headers: await headers(),
     });
-    console.log(user);
     return { errors: null, success: true, message: 'User created successfully', data: {
         email: email,
         password: password,
@@ -104,13 +105,13 @@ export const signIn = async(prevState: SignInState, formData: FormData): Promise
     }
     const { email, password } = result.data;
     try{
-        const session = await auth.api.signInEmail({
+        await auth.api.signInEmail({
             body: {
                 email,
                 password,
             },
+            headers: await headers(),
         });
-        console.log(session);
         return { errors: null, success: true, message: 'User logged in successfully', data: null };
     }
     catch(error){

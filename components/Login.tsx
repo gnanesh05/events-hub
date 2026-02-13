@@ -4,20 +4,22 @@ import { signIn } from '@/lib/actions/auth.actions';
 import { useEffect, useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
+import { authClient } from '@/lib/auth-client';
 
 export default function LoginForm() {
     const [state, formAction, isPending] = useActionState(signIn, {errors: null, success: false, data: null});
     const router = useRouter();
+    const { refetch } = authClient.useSession();
 
-    console.log(state, isPending);
     useEffect(()=>{
         if(state.success){
             posthog.capture('user_logged_in', {
                 data: state.data,
             });
+            refetch();
             router.push('/');
         }
-    },[state.success, router, state.data]);
+    },[state.success, router, state.data, refetch]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">

@@ -3,6 +3,7 @@ import { connectDB } from "./mongodb";
 import bcrypt from "bcrypt";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { Db } from "mongodb";
+import { nextCookies } from "better-auth/next-js";
 
 async function getMongoDB() {
     const mongooseConnection = await connectDB();
@@ -30,4 +31,5 @@ export const auth = betterAuth({
             return await bcrypt.hash(password, 10);
         },
     },
+    plugins: [nextCookies()]
 });

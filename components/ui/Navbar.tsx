@@ -8,7 +8,6 @@ import { useRouter } from 'next/navigation'
 const Navbar = () => {
 
   const {data:session, isPending} = authClient.useSession()
-  console.log(session, isPending)
   const router = useRouter();
 
   const handleNavClick = (linkName: string) => {
@@ -39,7 +38,7 @@ const Navbar = () => {
       <Link href="/events" onClick={() => handleNavClick('events')}>Events</Link>
       {
         session?.user && (
-          <Link href="/create-event" onClick={() => handleNavClick('create_event')}>Create Event</Link>
+          <Link href="/events/create" onClick={() => handleNavClick('create_event')}>Create Event</Link>
         )
       }
       {isPending ? (

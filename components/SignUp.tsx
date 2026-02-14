@@ -29,7 +29,7 @@ export default function SignUpForm() {
                 <form className="flex flex-col gap-4" action={formAction}>
                     <div className="flex flex-col gap-2">
                         <label htmlFor="username" className="text-sm font-medium">
-                            Email Address
+                            Username
                         </label>
                         <input
                             type="text"
@@ -84,7 +84,7 @@ export default function SignUpForm() {
                             Role
                         </label>
                         <select id="role" name="role" required defaultValue={state.data?.role || ''} className="bg-dark-200 rounded-[6px] px-5 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary">
-                            <option value="admin">Admin</option>
+                            <option value="organizer">Organizer</option>
                             <option value="participant">Participant</option>
                         </select>
                         {state.errors?.role && (

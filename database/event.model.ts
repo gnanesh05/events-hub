@@ -1,4 +1,4 @@
-import mongoose, { Schema, Model, Document } from 'mongoose';
+import mongoose, { Schema, Model, Document, Types } from 'mongoose';
 
 /**
  * TypeScript interface for Event document
@@ -22,6 +22,7 @@ export interface IEvent extends Document {
   slotsBooked: number;
   createdAt: Date;
   updatedAt: Date;
+  organizerId: Types.ObjectId;
 }
 
 /**
@@ -147,7 +148,13 @@ const EventSchema: Schema<IEvent> = new Schema<IEvent>(
     },
     slotsBooked: {
       type: Number,
-      required: [true, 'Slots booked are required'],
+      default: 0,
+    },
+    organizerId: {
+      type: Schema.Types.ObjectId,
+      required: [true, 'Organizer ID is required'],
+      ref: 'user', 
+      index: true, 
     },
   },
   {

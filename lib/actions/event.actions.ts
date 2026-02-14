@@ -8,7 +8,6 @@ import { auth } from "../auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-import { Types } from "mongoose";
 
 //schema
 const createEventSchema = z.object({
@@ -127,14 +126,11 @@ export const createEvent = async (prevState: CreateEventState, formData: FormDat
         
         await connectDB();
         
-        // Convert organizerId to ObjectId
+        // Get organizerId from session
         const organizerId = session?.user?.id;
         if (!organizerId) {
             throw new Error('User ID not found in session');
         }
-        
-        // Convert string ID to MongoDB ObjectId
-        const organizerObjectId = new Types.ObjectId(organizerId);
                 
         await Event.create({ 
             title, 
@@ -152,7 +148,7 @@ export const createEvent = async (prevState: CreateEventState, formData: FormDat
             tags: tagsArray, 
             bookingSlots,
             slotsBooked: 0, // Default to 0
-            organizerId: organizerObjectId,
+            organizerId: String(organizerId),
         });
         
         revalidatePath('/');    

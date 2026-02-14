@@ -22,6 +22,7 @@ export interface IEvent extends Document {
   slotsBooked: number;
   createdAt: Date;
   updatedAt: Date;
+  organizerId: string;
 }
 
 /**
@@ -147,7 +148,12 @@ const EventSchema: Schema<IEvent> = new Schema<IEvent>(
     },
     slotsBooked: {
       type: Number,
-      required: [true, 'Slots booked are required'],
+      default: 0,
+    },
+    organizerId: {
+      type: String,
+      required: [true, 'Organizer ID is required'],
+      index: true, // Index for faster queries on organizerId
     },
   },
   {

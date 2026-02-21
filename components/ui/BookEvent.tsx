@@ -1,23 +1,30 @@
 'use client';
-
-import { bookEvent } from "@/lib/actions/booking.actions";
+import { bookEvent} from "@/lib/actions/booking.actions";
 import { useState } from "react";
 import posthog from "posthog-js";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 
-const BookEvent = ({eventId, slug}:{eventId:string, slug:string}) => {
-    const [email, setEmail] = useState('');
+const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:number, slug:string}) => {
     const [submitted, setSubmitted] = useState(false);
+    const {data:session} = authClient.useSession();
+    const router = useRouter();
 
     const handleSubmit = async(e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const {success, message} = await bookEvent(eventId, slug, email);
+        if(!session?.user?.email){
+            console.error('User is not logged in');
+            router.push('/login');
+            return;
+        }
+        const {success, message} = await bookEvent(eventId, slug, session.user.email);
         if(success){
             setSubmitted(true);
             posthog.capture('event_booked', {
                 eventId: eventId,
                 slug: slug,
-                email: email,
+                email: session?.user?.email,
             });
         }
         else{
@@ -27,22 +34,23 @@ const BookEvent = ({eventId, slug}:{eventId:string, slug:string}) => {
     }
   return (
     <div id="book-event">
+           <h2 className="text-xl font-bold text-center">Book Your Spot</h2>
         {
             submitted ? (
-                <p className="text-sm">Thank you for registering!</p>
+                <p className="text-lg">Thank you for registering!</p>
             ) : (
-                <form onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="email">Email Address</label>
-                        <input 
-                         type="email"
-                         id="email" 
-                         placeholder="Enter your email address"
-                         value={email} 
-                         onChange={(e) => setEmail(e.target.value)} />
-                    </div>
-                    <button type="submit" className="button-submit">Register</button>
-                </form>
+                <div className="flex flex-col gap-3">
+                    {
+                        slotsBooked > 0 ? (
+                            <p className="text-lg text-center">Join {slotsBooked} other people who have already registered for this event.</p>
+                        ) : (
+                            <p className="text-lg text-center">Be the first to register for this event.</p>
+                        )
+                    }
+                    <form onSubmit={handleSubmit}>
+                        <button type="submit" className="button-submit">Register</button>
+                    </form>
+                </div>
             )
         }
     </div>

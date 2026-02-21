@@ -21,3 +21,14 @@ export const bookEvent = async (eventId: string, slug: string, email: string) =>
     return { success: false };
   }
 };
+
+export const hasUserBookedEvent = async (eventId: string, email: string) => {
+  try {
+    await connectDB();
+    const booking = await Booking.findOne({ eventId, email });
+    return booking ? true : false;
+  } catch (error) {
+    console.error('Error checking if user has booked event:', error);
+    return false;
+  }
+};

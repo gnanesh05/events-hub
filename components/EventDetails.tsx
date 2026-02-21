@@ -4,6 +4,10 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import BookEvent from '@/components/ui/BookEvent';
 import EventCard from '@/components/ui/EventCard';
+import { auth } from '@/lib/auth';
+import { hasUserBookedEvent } from '@/lib/actions/booking.actions';
+import { headers } from 'next/headers';
+import { BiSolidParty } from "react-icons/bi";
 
 const EventDetailItem = ({icon, label, alt}:{icon:string, label:string, alt:string}) => {
     return (
@@ -65,6 +69,16 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
       return notFound();
     }
    
+    const session = await auth.api.getSession({
+      headers: await headers()
+    })
+
+    let hasBooked = false;
+    if(session){
+      hasBooked = await hasUserBookedEvent(event._id.toString(), session?.user?.email);
+    }
+    
+
     const {description,title,image, overview, location,date,time, mode, audience, agenda, organizer, tags, bookingSlots, slotsBooked}= event;
     const similarEvents :IEvent[] = await getSimilarEventsBySlug(slug);
     const isBookingOpen = bookingSlots > slotsBooked && slotsBooked > 0;
@@ -103,19 +117,15 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
           </div>
           <aside className="booking">
             <div className="signup-card">
-              <h2>Book Your Spot</h2>
               {
-                isBookingOpen ? (
-                  <p className="text-sm">
-                    Join {slotsBooked} other people who have already registered for this event.
-                  </p>
+                hasBooked ? (
+                  <div className="flex flex-row-gap-1 items-center justify-center">
+                    <p className="text-lg">You have already booked this event. See you there! <BiSolidParty className="inline-block" /></p>
+                  </div>
                 ) : (
-                  <p className="text-sm">
-                    Be the first to register for this event.
-                  </p>
-                )
+                    <BookEvent eventId={event._id.toString()} slotsBooked={slotsBooked} slug={slug} />
+                  )
               }
-              <BookEvent eventId={event._id.toString()} slug={slug} />
             </div>
           </aside>
         </div>

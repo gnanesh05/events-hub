@@ -17,7 +17,7 @@ export default function LoginForm() {
                 data: state.data,
             });
             refetch();
-            router.push('/');
+            router.back();
         }
     },[state.success, router, state.data, refetch]);
 

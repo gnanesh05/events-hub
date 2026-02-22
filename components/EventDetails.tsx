@@ -7,7 +7,7 @@ import EventCard from '@/components/ui/EventCard';
 import { auth } from '@/lib/auth';
 import { hasUserBookedEvent } from '@/lib/actions/booking.actions';
 import { headers } from 'next/headers';
-import { BiSolidParty } from "react-icons/bi";
+import { ImCool, ImSad } from "react-icons/im";
 
 const EventDetailItem = ({icon, label, alt}:{icon:string, label:string, alt:string}) => {
     return (
@@ -81,7 +81,6 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
 
     const {description,title,image, overview, location,date,time, mode, audience, agenda, organizer, tags, bookingSlots, slotsBooked}= event;
     const similarEvents :IEvent[] = await getSimilarEventsBySlug(slug);
-    const isBookingOpen = bookingSlots > slotsBooked && slotsBooked > 0;
     return (
       <section id="event">
         <div className="header">
@@ -120,7 +119,11 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
               {
                 hasBooked ? (
                   <div className="flex flex-row-gap-1 items-center justify-center">
-                    <p className="text-lg">You have already booked this event. See you there! <BiSolidParty className="inline-block" /></p>
+                    <p className="text-lg">You have already booked this event. See you there! <ImCool className="inline-block text-2xl" /></p>
+                  </div>
+                ) : bookingSlots == slotsBooked ? (
+                  <div className="flex flex-row-gap-1 items-center justify-center">
+                    <p className="text-lg">Booking slots are full. <ImSad className="inline-block text-2xl" /></p>
                   </div>
                 ) : (
                     <BookEvent eventId={event._id.toString()} slotsBooked={slotsBooked} slug={slug} />

@@ -27,7 +27,12 @@ export default function LoginForm() {
                 <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
                 
                 <form className="flex flex-col gap-4" action={formAction}>
-                    
+                    {state.message && !state.success && (
+                        <div className="bg-red-500/10 border border-red-500/50 rounded-lg p-4">
+                            <p className="text-sm text-red-500">{state.message}</p>
+                        </div>
+                    )}
+
                     <div className="flex flex-col gap-2">
                         <label htmlFor="email" className="text-sm font-medium">
                             Email Address

@@ -64,10 +64,12 @@ export async function POST(req:NextRequest) {
     }
 }
 
-export async function GET(){
+export async function GET(req: NextRequest){
     try{
         await connectDB();
-        const events = await Event.find().sort({createdAt:-1});
+        const { searchParams } = new URL(req.url);
+        const limit = searchParams.get('limit') === 'all' ? 0 : 5;
+        const events = await Event.find().sort({createdAt:-1}).limit(limit);
         return NextResponse.json({ message: 'Events fetched successfully' , events}, { status: 200 });
     }
     catch(error){

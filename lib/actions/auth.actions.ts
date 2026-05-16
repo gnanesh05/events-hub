@@ -8,7 +8,7 @@ const signUpSchema = z.object({
     email: z.email({message: "Invalid email address"}),
     password: z.string().min(8, {message: "Password must be at least 8 characters long"}),
     username: z.string().min(3, {message: "Username must be at least 3 characters long"}),
-    role: z.enum(["admin", "participant"], {message: "Invalid role"}),
+    role: z.enum(["organizer", "participant"], {message: "Invalid role"}),
 });
 
 const signInSchema = z.object({

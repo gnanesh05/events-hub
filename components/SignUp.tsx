@@ -5,6 +5,7 @@ import { useActionState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
 export default function SignUpForm() {
     const [state, formAction, isPending] = useActionState(signUp, {errors: null, success: false, data: null});
@@ -13,13 +14,17 @@ export default function SignUpForm() {
 
     useEffect(() => {
         if(state.success){
+            toast.success('Account created successfully');
             posthog.capture('user_signed_up', {
                 data: state.data,
             });
             refetch();
             router.push('/');
         }
-    }, [state.success, router, state.data, refetch]);
+        if(state.message && !state.success){
+            toast.error(state.message);
+        }
+    }, [state.success, router, state.data, refetch, state.message]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">

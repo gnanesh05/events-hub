@@ -5,6 +5,7 @@ import { useEffect, useActionState } from 'react';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { authClient } from '@/lib/auth-client';
+import { toast } from 'sonner';
 
 export default function LoginForm() {
     const [state, formAction, isPending] = useActionState(signIn, {errors: null, success: false, data: null});
@@ -13,13 +14,17 @@ export default function LoginForm() {
 
     useEffect(()=>{
         if(state.success){
+            toast.success('Logged in successfully');
             posthog.capture('user_logged_in', {
                 data: state.data,
             });
             refetch();
             router.back();
         }
-    },[state.success, router, state.data, refetch]);
+        if(state.message && !state.success){
+            toast.error(state.message);
+        }
+    },[state.success, router, state.data, refetch, state.message]);
 
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">

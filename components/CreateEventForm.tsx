@@ -5,6 +5,7 @@ import { createEvent } from '@/lib/actions/event.actions';
 import { useRouter } from 'next/navigation';
 import posthog from 'posthog-js';
 import { CreateEventState } from '@/lib/actions/event.actions';
+import { toast } from 'sonner';
 
 
 const CreateEventForm = () => {
@@ -41,12 +42,16 @@ const CreateEventForm = () => {
 
     useEffect(() => {
         if(state.success){
+            toast.success('Event created successfully!');
             posthog.capture('event_created', {
                 data: state.data,
             });
             router.push('/');
         }
-    }, [state.success, router, state.data]);
+        if(state.errors?._form){
+            toast.error(state.errors._form[0]);
+        }
+    }, [state.success, router, state.data, state.errors]);
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] py-8">

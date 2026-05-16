@@ -4,6 +4,7 @@ import Image from 'next/image'
 import posthog from 'posthog-js'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
+import { toast } from 'sonner'
 
 const Navbar = () => {
 
@@ -19,9 +20,11 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await authClient.signOut();
+      toast.success('Logged out successfully');
       posthog.capture('user_logged_out');
       router.push('/');
     } catch (error) {
+      toast.error('Failed to log out');
       console.error('Logout error:', error);
     }
   }
@@ -46,7 +49,7 @@ const Navbar = () => {
           ) : session?.user ? (
             <>
               <span>Welcome, {session.user.name}</span>
-              <button onClick={handleLogout}>Logout</button>
+              <button style={{cursor: 'pointer'}} onClick={handleLogout}>Logout</button>
             </>
           ) : (
             <Link href="/login" onClick={() => handleNavClick('login')}>Login</Link>

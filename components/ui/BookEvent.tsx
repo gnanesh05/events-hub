@@ -4,6 +4,7 @@ import { useState } from "react";
 import posthog from "posthog-js";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 
 const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:number, slug:string}) => {
@@ -21,6 +22,7 @@ const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:num
         const {success, message} = await bookEvent(eventId, slug, session.user.email);
         if(success){
             setSubmitted(true);
+            toast.success('Event booked successfully!');
             posthog.capture('event_booked', {
                 eventId: eventId,
                 slug: slug,
@@ -28,6 +30,7 @@ const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:num
             });
         }
         else{
+            toast.error(message || 'Failed to book event');
             console.error(message);
             posthog.captureException(message);
         }

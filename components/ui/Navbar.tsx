@@ -40,7 +40,7 @@ const Navbar = () => {
       <Link href="/" onClick={() => handleNavClick('home')}>Home</Link>
       <Link href="/events" onClick={() => handleNavClick('events')}>Events</Link>
       {
-        session?.user && (
+        session?.user && session.user?.role === 'organizer'&& (
           <Link href="/events/create" onClick={() => handleNavClick('create_event')}>Create Event</Link>
         )
       }

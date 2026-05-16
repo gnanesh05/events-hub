@@ -9,6 +9,7 @@ import { toast } from "sonner";
 
 const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:number, slug:string}) => {
     const [submitted, setSubmitted] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const {data:session} = authClient.useSession();
     const router = useRouter();
 
@@ -19,7 +20,9 @@ const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:num
             router.push('/login');
             return;
         }
+        setIsLoading(true);
         const {success, message} = await bookEvent(eventId, slug, session.user.email);
+        setIsLoading(false);
         if(success){
             setSubmitted(true);
             toast.success('Event booked successfully!');
@@ -51,7 +54,7 @@ const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:num
                         )
                     }
                     <form onSubmit={handleSubmit}>
-                        <button type="submit" className="button-submit">Register</button>
+                        <button type="submit" disabled={isLoading} className="button-submit">{isLoading ? 'Registering...' : 'Register'}</button>
                     </form>
                 </div>
             )

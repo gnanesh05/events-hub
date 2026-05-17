@@ -8,6 +8,7 @@ import { auth } from '@/lib/auth';
 import { hasUserBookedEvent } from '@/lib/actions/booking.actions';
 import { headers } from 'next/headers';
 import { ImCool, ImSad } from "react-icons/im";
+import CancelBooking from '@/components/ui/CancelBooking';
 
 const EventDetailItem = ({icon, label, alt}:{icon:string, label:string, alt:string}) => {
     return (
@@ -118,15 +119,16 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
             <div className="signup-card">
               {
                 hasBooked ? (
-                  <div className="flex flex-row-gap-1 items-center justify-center">
-                    <p className="text-lg">You have already booked this event. See you there! <ImCool className="inline-block text-2xl" /></p>
+                  <div className="flex flex-col items-center justify-center">
+                    <p className="text-lg">You have already booked this event.</p>
+                    <CancelBooking eventId={event._id.toString()} slug={slug} email={session!.user.email} />
                   </div>
                 ) : bookingSlots == slotsBooked ? (
                   <div className="flex flex-row-gap-1 items-center justify-center">
                     <p className="text-lg">Booking slots are full. <ImSad className="inline-block text-2xl" /></p>
                   </div>
                 ) : (
-                    <BookEvent eventId={event._id.toString()} slotsBooked={slotsBooked} slug={slug} />
+                    <BookEvent eventId={event._id.toString()} slotsBooked={slotsBooked} bookingSlots={bookingSlots} slug={slug} />
                   )
               }
             </div>

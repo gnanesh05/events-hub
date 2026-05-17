@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 
-const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:number, slug:string}) => {
+const BookEvent = ({eventId, slotsBooked, bookingSlots, slug}:{eventId:string, slotsBooked:number, bookingSlots:number, slug:string}) => {
     const [submitted, setSubmitted] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const {data:session} = authClient.useSession();
@@ -46,13 +46,12 @@ const BookEvent = ({eventId, slotsBooked, slug}:{eventId:string, slotsBooked:num
                 <p className="text-lg">Thank you for registering!</p>
             ) : (
                 <div className="flex flex-col gap-3">
-                    {
-                        slotsBooked > 0 ? (
-                            <p className="text-lg text-center">Join {slotsBooked} other people who have already registered for this event.</p>
-                        ) : (
-                            <p className="text-lg text-center">Be the first to register for this event.</p>
-                        )
-                    }
+                    <p className="text-lg text-center">
+                        {slotsBooked > 0
+                            ? `${slotsBooked} of ${bookingSlots} spots taken — ${bookingSlots - slotsBooked} left`
+                            : `Be the first to register! ${bookingSlots} spots available.`
+                        }
+                    </p>
                     <form onSubmit={handleSubmit}>
                         <button type="submit" disabled={isLoading} className="button-submit">{isLoading ? 'Registering...' : 'Register'}</button>
                     </form>

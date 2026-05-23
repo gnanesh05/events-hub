@@ -7,6 +7,7 @@ import posthog from 'posthog-js'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 import { toast } from 'sonner'
+import NotificationBell from './NotificationBell'
 
 const Navbar = () => {
   const { data: session, isPending } = authClient.useSession()
@@ -83,6 +84,7 @@ const Navbar = () => {
           ) : (
             <Link href="/login" onClick={() => handleNavClick('login')}>Login</Link>
           )}
+          {!isPending && session?.user && <NotificationBell />}
         </ul>
       </nav>
     </header>

@@ -247,6 +247,11 @@
     }
   }
 
+  .notification-dropdown {
+    @apply absolute right-0 top-9 card-shadow flex flex-col w-80 rounded-[8px] overflow-hidden z-50 border border-border-dark backdrop-blur-xl;
+    background-color: #0d161af0;
+  }
+
   .account-dropdown {
     @apply absolute right-0 top-9 glass card-shadow flex flex-col min-w-[140px] rounded-[8px] overflow-hidden z-50;
 

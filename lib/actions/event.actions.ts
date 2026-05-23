@@ -3,12 +3,14 @@
 import { connectDB } from "../mongodb";
 import Event from "@/database/event.model";
 import Booking from "@/database/booking.model";
+import User from "@/database/user.model";
 import { z } from "zod";
 import { v2 as cloudinary } from 'cloudinary';
 import { auth } from "../auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { createNotificationsForParticipants } from "../utils/notifications";
 
 //schema
 const createEventSchema = z.object({
@@ -274,6 +276,24 @@ export const updateEvent = async (slug: string, prevState: CreateEventState, for
         revalidatePath('/dashboard');
         revalidatePath('/events');
 
+        try {
+            const bookings = await Booking.find({ eventId: existingEvent._id }).lean();
+            if (bookings.length > 0) {
+                const emails = bookings.map((b) => b.email);
+                const users = await User.find({ email: { $in: emails } }).lean();
+                const userIds = users.map((u) => u._id.toString());
+                await createNotificationsForParticipants({
+                    participantUserIds: userIds,
+                    type: 'event_updated',
+                    message: `"${existingEvent.title}" has been updated. Check the latest details.`,
+                    eventId: existingEvent._id.toString(),
+                    eventSlug: slug,
+                });
+            }
+        } catch (e) {
+            console.error('Failed to create update notifications:', e);
+        }
+
         return { errors: null, success: true, message: 'Event updated successfully', data: null };
     } catch (error) {
         console.error('Error updating event:', error);
@@ -294,9 +314,24 @@ export const deleteEvent = async (eventId: string): Promise<{ success: boolean; 
     const dbSession = await connection.startSession();
 
     try {
+        type NotificationPayload = { userIds: string[]; title: string; slug: string };
+        let notificationPayload: NotificationPayload | null = null;
+
         await dbSession.withTransaction(async () => {
             const event = await Event.findOne({ _id: eventId, organizerId: String(session.user.id) }).session(dbSession);
             if (!event) throw new Error('Event not found or unauthorized');
+
+            // Capture participant info before cascade delete
+            const bookings = await Booking.find({ eventId }).session(dbSession).lean();
+            if (bookings.length > 0) {
+                const emails = bookings.map((b) => b.email);
+                const users = await User.find({ email: { $in: emails } }).session(dbSession).lean();
+                notificationPayload = {
+                    userIds: users.map((u) => u._id.toString()),
+                    title: event.title,
+                    slug: event.slug,
+                };
+            }
 
             await Booking.deleteMany({ eventId }).session(dbSession);
             await Event.findByIdAndDelete(eventId).session(dbSession);
@@ -305,6 +340,20 @@ export const deleteEvent = async (eventId: string): Promise<{ success: boolean; 
         revalidatePath('/dashboard');
         revalidatePath('/events');
         revalidatePath('/');
+
+        if (notificationPayload) {
+            try {
+                await createNotificationsForParticipants({
+                    participantUserIds: notificationPayload!.userIds,
+                    type: 'event_deleted',
+                    message: `"${notificationPayload!.title}" has been cancelled.`,
+                    eventId,
+                    eventSlug: notificationPayload!.slug,
+                });
+            } catch (e) {
+                console.error('Failed to create deletion notifications:', e);
+            }
+        }
 
         return { success: true };
     } catch (error) {

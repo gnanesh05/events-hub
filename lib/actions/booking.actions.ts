@@ -6,6 +6,7 @@ import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
 import { auth } from "../auth";
 import { headers } from "next/headers";
+import { createNotification } from "../utils/notifications";
 
 export const bookEvent = async (eventId: string, slug: string, email: string) => {
   const authSession = await auth.api.getSession({ headers: await headers() });
@@ -20,7 +21,7 @@ export const bookEvent = async (eventId: string, slug: string, email: string) =>
   const dbSession = await connection.startSession();
 
   try {
-    let result: { success: boolean; message?: string } = { success: false };
+    let result: { success: boolean; message?: string; event?: { organizerId: string; title: string } } = { success: false };
 
     await dbSession.withTransaction(async () => {
       const event = await Event.findOneAndUpdate(
@@ -38,15 +39,28 @@ export const bookEvent = async (eventId: string, slug: string, email: string) =>
         return;
       }
 
-      await Booking.create([{ eventId, email }], { session: dbSession });
-      result = { success: true };
+      const name = authSession.user.name ?? email;
+      await Booking.create([{ eventId, email, name }], { session: dbSession });
+      result = { success: true, event: { organizerId: event.organizerId, title: event.title } };
     });
 
-    if (result.success) {
+    if (result.success && result.event) {
       revalidatePath(`/events/${slug}`);
+
+      try {
+        await createNotification({
+          userId: result.event.organizerId,
+          type: 'new_booking',
+          message: `${authSession.user.name ?? email} registered for "${result.event.title}"`,
+          eventId,
+          eventSlug: slug,
+        });
+      } catch (e) {
+        console.error('Failed to create booking notification:', e);
+      }
     }
 
-    return result;
+    return { success: result.success, message: result.message };
   } catch (error) {
     console.error('Error booking event:', error);
     if ((error as { code?: number }).code === 11000) {
@@ -59,13 +73,26 @@ export const bookEvent = async (eventId: string, slug: string, email: string) =>
 };
 
 export const cancelBooking = async (eventId: string, slug: string, email: string) => {
+  const authSession = await auth.api.getSession({ headers: await headers() });
   const connection = await connectDB();
   const session = await connection.startSession();
 
   try {
-    let result: { success: boolean; message?: string } = { success: false };
+    let result: { success: boolean; message?: string; organizerId?: string; eventTitle?: string } = { success: false };
 
     await session.withTransaction(async () => {
+      const event = await Event.findByIdAndUpdate(
+        eventId,
+        { $inc: { slotsBooked: -1 } },
+        { session, new: true }
+      );
+
+      if (!event) {
+        result = { success: false, message: 'Event not found' };
+        await session.abortTransaction();
+        return;
+      }
+
       const booking = await Booking.findOneAndDelete({ eventId, email }, { session });
       if (!booking) {
         result = { success: false, message: 'Booking not found' };
@@ -73,15 +100,28 @@ export const cancelBooking = async (eventId: string, slug: string, email: string
         return;
       }
 
-      await Event.findByIdAndUpdate(eventId, { $inc: { slotsBooked: -1 } }, { session });
-      result = { success: true };
+      result = { success: true, organizerId: event.organizerId, eventTitle: event.title };
     });
 
     if (result.success) {
       revalidatePath(`/events/${slug}`);
+
+      if (result.organizerId && authSession) {
+        try {
+          await createNotification({
+            userId: result.organizerId,
+            type: 'booking_cancelled',
+            message: `${authSession.user.name ?? email} cancelled registration for "${result.eventTitle}"`,
+            eventId,
+            eventSlug: slug,
+          });
+        } catch (e) {
+          console.error('Failed to create cancellation notification:', e);
+        }
+      }
     }
 
-    return result;
+    return { success: result.success, message: result.message };
   } catch (error) {
     console.error('Error cancelling booking:', error);
     return { success: false, message: 'Failed to cancel booking' };

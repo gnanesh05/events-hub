@@ -6,7 +6,27 @@ interface Props {
   searchParams: Promise<Record<string, string>>;
 }
 
-async function EventsPage({ searchParams }: Props) {
+const EventsResultsSkeleton = () => (
+  <div className="flex flex-col gap-4 mt-10">
+    <div className="h-11 w-full bg-white/10 rounded-xl animate-pulse" />
+    <div className="flex gap-3">
+      {Array.from({ length: 3 }).map((_, i) => (
+        <div key={i} className="h-10 w-28 bg-white/10 rounded-lg animate-pulse" />
+      ))}
+    </div>
+    <ul className="events mt-4">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <li key={i} className="list-none space-y-3">
+          <div className="h-[300px] w-full bg-white/10 rounded-lg animate-pulse" />
+          <div className="h-4 w-3/4 bg-white/10 rounded animate-pulse" />
+          <div className="h-4 w-1/2 bg-white/10 rounded animate-pulse" />
+        </li>
+      ))}
+    </ul>
+  </div>
+);
+
+async function EventsResults({ searchParams }: Props) {
   const params = await searchParams;
 
   const filters: SearchFilters = {
@@ -22,16 +42,18 @@ async function EventsPage({ searchParams }: Props) {
     getFilterOptions(),
   ]);
 
+  return <SearchEvents events={events} filterOptions={filterOptions} />;
+}
+
+export default function EventsPage({ searchParams }: Props) {
   return (
     <section>
       <h1 className="text-center">Explore All Events</h1>
       <p className="text-center mt-5">Browse workshops, hackathons, conferences and more</p>
 
-      <Suspense>
-        <SearchEvents events={events} filterOptions={filterOptions} />
+      <Suspense fallback={<EventsResultsSkeleton />}>
+        <EventsResults searchParams={searchParams} />
       </Suspense>
     </section>
   );
 }
-
-export default EventsPage;

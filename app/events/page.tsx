@@ -1,30 +1,37 @@
-import EventCard from '@/components/ui/EventCard'
-import { IEvent } from '@/database/event.model'
-import { cacheLife } from 'next/cache'
+import { Suspense } from 'react';
+import { searchEvents, getFilterOptions, SearchFilters } from '@/lib/actions/search.actions';
+import SearchEvents from '@/components/search/SearchEvents';
 
-async function Events() {
-  'use cache'
-  cacheLife('hours')
+interface Props {
+  searchParams: Promise<Record<string, string>>;
+}
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events?limit=all`)
-  const { events } = await response.json()
+async function EventsPage({ searchParams }: Props) {
+  const params = await searchParams;
+
+  const filters: SearchFilters = {
+    query: params.q,
+    tags: params.tags,
+    date: params.date,
+    location: params.location,
+    mode: params.mode,
+  };
+
+  const [events, filterOptions] = await Promise.all([
+    searchEvents(filters),
+    getFilterOptions(),
+  ]);
 
   return (
     <section>
       <h1 className="text-center">Explore All Events</h1>
       <p className="text-center mt-5">Browse workshops, hackathons, conferences and more</p>
 
-      <div className="mt-20 space-y-7">
-        <ul className="events">
-          {events && events.length > 0 && events.map((event: IEvent) => (
-            <li key={event.title} className="list-none">
-              <EventCard title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} />
-            </li>
-          ))}
-        </ul>
-      </div>
+      <Suspense>
+        <SearchEvents events={events} filterOptions={filterOptions} />
+      </Suspense>
     </section>
-  )
-} 
+  );
+}
 
-export default Events
+export default EventsPage;

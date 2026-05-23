@@ -4,31 +4,41 @@ import { Booking, Event } from "@/database";
 import { connectDB } from "../mongodb";
 import mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
+import { auth } from "../auth";
+import { headers } from "next/headers";
 
 export const bookEvent = async (eventId: string, slug: string, email: string) => {
+  const authSession = await auth.api.getSession({ headers: await headers() });
+  if (!authSession) {
+    return { success: false, message: 'You must be logged in to book an event' };
+  }
+  if (authSession.user.role === 'organizer') {
+    return { success: false, message: 'Organizers cannot book events' };
+  }
+
   const connection = await connectDB();
-  const session = await connection.startSession();
+  const dbSession = await connection.startSession();
 
   try {
     let result: { success: boolean; message?: string } = { success: false };
 
-    await session.withTransaction(async () => {
+    await dbSession.withTransaction(async () => {
       const event = await Event.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(eventId), $expr: { $lt: ["$slotsBooked", "$bookingSlots"] } },
         { $inc: { slotsBooked: 1 } },
-        { new: true, session }
+        { new: true, session: dbSession }
       );
 
       if (!event) {
-        const exists = await Event.findById(eventId).session(session);
+        const exists = await Event.findById(eventId).session(dbSession);
         result = exists
           ? { success: false, message: 'Booking slots are full' }
           : { success: false, message: 'Event not found' };
-        await session.abortTransaction();
+        await dbSession.abortTransaction();
         return;
       }
 
-      await Booking.create([{ eventId, email }], { session });
+      await Booking.create([{ eventId, email }], { session: dbSession });
       result = { success: true };
     });
 
@@ -44,7 +54,7 @@ export const bookEvent = async (eventId: string, slug: string, email: string) =>
     }
     return { success: false, message: 'Failed to book event' };
   } finally {
-    await session.endSession();
+    await dbSession.endSession();
   }
 };
 

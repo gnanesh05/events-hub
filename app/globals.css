@@ -95,7 +95,7 @@
 }
 
 @utility text-gradient {
-  @apply to-blue bg-gradient-to-b from-white via-white bg-clip-text font-semibold text-transparent;
+  @apply to-blue bg-gradient-to-b from-white via-white bg-clip-text font-semibold text-transparent pb-1;
 }
 
 @utility glass {
@@ -183,11 +183,11 @@
     }
 
     p {
-      @apply text-light-200 text-sm font-light;
+      @apply  text-sm font-light;
     }
 
     .datetime {
-      @apply text-light-200 flex flex-row flex-wrap items-center gap-4;
+      @apply flex flex-row flex-wrap items-center gap-4;
 
       div {
         @apply flex flex-row gap-2;
@@ -235,7 +235,7 @@
     }
 
     p {
-      @apply text-light-100 text-lg max-sm:text-sm;
+      @apply text-lg max-sm:text-sm;
     }
 
     .flex-col-gap-2 {
@@ -245,6 +245,22 @@
     .flex-row-gap-2 {
       @apply flex flex-row gap-2;
     }
+  }
+
+  .account-dropdown {
+    @apply absolute right-0 top-9 glass card-shadow flex flex-col min-w-[140px] rounded-[8px] overflow-hidden z-50;
+
+    a, button {
+      @apply px-4 py-3 text-left text-sm text-foreground hover:bg-white/10 transition-colors w-full;
+    }
+  }
+
+  .tab-link {
+    @apply text-light-200 text-sm font-medium pb-2 border-b-2 border-transparent transition-colors hover:text-foreground;
+  }
+
+  .tab-active {
+    @apply text-foreground border-primary;
   }
 
   .pill {

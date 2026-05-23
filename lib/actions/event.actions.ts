@@ -2,6 +2,7 @@
 
 import { connectDB } from "../mongodb";
 import Event from "@/database/event.model";
+import Booking from "@/database/booking.model";
 import { z } from "zod";
 import { v2 as cloudinary } from 'cloudinary';
 import { auth } from "../auth";
@@ -195,3 +196,121 @@ export const getSimilarEventsBySlug = async (slug: string) => {
         return [];
     }
 }
+
+export const updateEvent = async (slug: string, prevState: CreateEventState, formData: FormData): Promise<CreateEventState> => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) redirect('/login');
+    if (session.user.role !== 'organizer') redirect('/');
+
+    await connectDB();
+
+    const existingEvent = await Event.findOne({ slug });
+    if (!existingEvent) {
+        return { errors: { _form: ['Event not found'] }, success: false, data: null };
+    }
+    if (existingEvent.organizerId !== String(session.user.id)) {
+        return { errors: { _form: ['You are not authorized to edit this event'] }, success: false, data: null };
+    }
+
+    const formValues = {
+        title: formData.get('title') as string,
+        description: formData.get('description') as string,
+        overview: formData.get('overview') as string,
+        venue: formData.get('venue') as string,
+        location: formData.get('location') as string,
+        date: formData.get('date') as string,
+        time: formData.get('time') as string,
+        mode: formData.get('mode') as string,
+        audience: formData.get('audience') as string,
+        organizer: formData.get('organizer') as string,
+        agenda: formData.get('agenda') as string,
+        tags: formData.get('tags') as string,
+        bookingSlots: formData.get('bookingSlots') as string,
+    };
+
+    try {
+        const file = formData.get('image') as File;
+        let imageUrl: string = formData.get('existingImage') as string;
+
+        if (file && file.size > 0) {
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+            imageUrl = await new Promise<string>((resolve, reject) => {
+                cloudinary.uploader.upload_stream(
+                    { resource_type: 'image', folder: 'events' },
+                    (error, result) => {
+                        if (error) reject(error);
+                        else resolve(result!.secure_url);
+                    }
+                ).end(buffer);
+            });
+        }
+
+        const data = {
+            ...formValues,
+            image: imageUrl,
+            bookingSlots: parseInt(formValues.bookingSlots || '0'),
+        };
+
+        const result = createEventSchema.safeParse(data);
+        if (!result.success) {
+            return {
+                errors: result.error.flatten().fieldErrors,
+                success: false,
+                data: { ...formValues, image: imageUrl, bookingSlots: data.bookingSlots } as CreateEventInput,
+            };
+        }
+
+        const { title, description, overview, image, venue, location, date, time, mode, audience, agenda, organizer, tags, bookingSlots } = result.data;
+        const agendaArray = JSON.parse(agenda);
+        const tagsArray = JSON.parse(tags);
+
+        await Event.findOneAndUpdate(
+            { slug, organizerId: String(session.user.id) },
+            { title, description, overview, image, venue, location, date, time, mode, audience, agenda: agendaArray, organizer, tags: tagsArray, bookingSlots }
+        );
+
+        revalidatePath(`/events/${slug}`);
+        revalidatePath('/dashboard');
+        revalidatePath('/events');
+
+        return { errors: null, success: true, message: 'Event updated successfully', data: null };
+    } catch (error) {
+        console.error('Error updating event:', error);
+        return {
+            errors: { _form: [error instanceof Error ? error.message : 'Failed to update event'] },
+            success: false,
+            data: { ...formValues, image: '', bookingSlots: parseInt(formValues.bookingSlots || '0') } as CreateEventInput,
+        };
+    }
+};
+
+export const deleteEvent = async (eventId: string): Promise<{ success: boolean; message?: string }> => {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return { success: false, message: 'Not authenticated' };
+    if (session.user.role !== 'organizer') return { success: false, message: 'Unauthorized' };
+
+    const connection = await connectDB();
+    const dbSession = await connection.startSession();
+
+    try {
+        await dbSession.withTransaction(async () => {
+            const event = await Event.findOne({ _id: eventId, organizerId: String(session.user.id) }).session(dbSession);
+            if (!event) throw new Error('Event not found or unauthorized');
+
+            await Booking.deleteMany({ eventId }).session(dbSession);
+            await Event.findByIdAndDelete(eventId).session(dbSession);
+        });
+
+        revalidatePath('/dashboard');
+        revalidatePath('/events');
+        revalidatePath('/');
+
+        return { success: true };
+    } catch (error) {
+        console.error('Error deleting event:', error);
+        return { success: false, message: error instanceof Error ? error.message : 'Failed to delete event' };
+    } finally {
+        await dbSession.endSession();
+    }
+};

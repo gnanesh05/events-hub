@@ -247,6 +247,22 @@
     }
   }
 
+  .account-dropdown {
+    @apply absolute right-0 top-9 glass card-shadow flex flex-col min-w-[140px] rounded-[8px] overflow-hidden z-50;
+
+    a, button {
+      @apply px-4 py-3 text-left text-sm text-foreground hover:bg-white/10 transition-colors w-full;
+    }
+  }
+
+  .tab-link {
+    @apply text-light-200 text-sm font-medium pb-2 border-b-2 border-transparent transition-colors hover:text-foreground;
+  }
+
+  .tab-active {
+    @apply text-foreground border-primary;
+  }
+
   .pill {
     @apply bg-dark-100 text-light-100 text-xs rounded-[6px] px-5 py-2;
   }

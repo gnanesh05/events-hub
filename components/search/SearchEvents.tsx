@@ -37,34 +37,35 @@ const SearchEvents = ({ events, filterOptions }: Props) => {
 
   const [inputValue, setInputValue] = useState(q);
 
-  const updateParam = (key: string, value: string) => {
+  const updateParam = useCallback((key: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) params.set(key, value);
     else params.delete(key);
     router.replace(`/events?${params.toString()}`);
-  };
+  }, [searchParams, router]);
 
-  const toggleTag = (tag: string) => {
+  const toggleTag = useCallback((tag: string) => {
     const current = tags ? tags.split(',') : [];
     const next = current.includes(tag)
       ? current.filter((t) => t !== tag)
       : [...current, tag];
     updateParam('tags', next.join(','));
-  };
+  }, [tags, updateParam]);
 
-  const clearAll = () => {
+  const clearAll = useCallback(() => {
     setInputValue('');
     router.replace('/events');
-  };
+  }, [router]);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(
     debounce((value: string) => updateParam('q', value), 300),
-    []
+    [updateParam]
   );
 
   useEffect(() => {
     debouncedSearch(inputValue);
-  }, [inputValue]);
+  }, [inputValue, debouncedSearch]);
 
   // Sync input if URL param is cleared externally (e.g. clear all)
   useEffect(() => {

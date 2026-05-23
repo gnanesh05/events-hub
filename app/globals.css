@@ -260,6 +260,14 @@
     }
   }
 
+  .search-filter-select {
+    @apply bg-dark-200/40 border border-gray-600/50 rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all cursor-pointer;
+
+    option {
+      @apply bg-dark-100 text-foreground;
+    }
+  }
+
   .tab-link {
     @apply text-light-200 text-sm font-medium pb-2 border-b-2 border-transparent transition-colors hover:text-foreground;
   }

@@ -40,7 +40,7 @@ export default async function DashboardPage({ searchParams }: Props) {
   return (
     <section>
       <h1 className="text-center">My Events</h1>
-      <p className="text-center mt-5">Events you&apos;ve registered for</p>
+      <h4 className="text-center mt-5 font-bold">Events you&apos;ve registered for</h4>
 
       <div className="flex justify-center gap-6 mt-10">
         <Link

@@ -118,7 +118,11 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
           <aside className="booking">
             <div className="signup-card">
               {
-                hasBooked ? (
+                session?.user?.role === 'organizer' ? (
+                  <div className="flex flex-row-gap-1 items-center justify-center">
+                    <p className="text-lg text-center">Organizers cannot book events.</p>
+                  </div>
+                ) : hasBooked ? (
                   <div className="flex flex-col items-center justify-center">
                     <p className="text-lg">You have already booked this event.</p>
                     <CancelBooking eventId={event._id.toString()} slug={slug} email={session!.user.email} />

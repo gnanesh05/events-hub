@@ -95,7 +95,7 @@
 }
 
 @utility text-gradient {
-  @apply to-blue bg-gradient-to-b from-white via-white bg-clip-text font-semibold text-transparent;
+  @apply to-blue bg-gradient-to-b from-white via-white bg-clip-text font-semibold text-transparent pb-1;
 }
 
 @utility glass {
@@ -183,11 +183,11 @@
     }
 
     p {
-      @apply text-light-200 text-sm font-light;
+      @apply  text-sm font-light;
     }
 
     .datetime {
-      @apply text-light-200 flex flex-row flex-wrap items-center gap-4;
+      @apply flex flex-row flex-wrap items-center gap-4;
 
       div {
         @apply flex flex-row gap-2;
@@ -235,7 +235,7 @@
     }
 
     p {
-      @apply text-light-100 text-lg max-sm:text-sm;
+      @apply text-lg max-sm:text-sm;
     }
 
     .flex-col-gap-2 {

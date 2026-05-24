@@ -314,23 +314,21 @@ export const deleteEvent = async (eventId: string): Promise<{ success: boolean; 
     const dbSession = await connection.startSession();
 
     try {
-        type NotificationPayload = { userIds: string[]; title: string; slug: string };
-        let notificationPayload: NotificationPayload | null = null;
+        const notificationPayloads: Array<{ userIds: string[]; title: string; slug: string }> = [];
 
         await dbSession.withTransaction(async () => {
             const event = await Event.findOne({ _id: eventId, organizerId: String(session.user.id) }).session(dbSession);
             if (!event) throw new Error('Event not found or unauthorized');
 
-            // Capture participant info before cascade delete
             const bookings = await Booking.find({ eventId }).session(dbSession).lean();
             if (bookings.length > 0) {
                 const emails = bookings.map((b) => b.email);
                 const users = await User.find({ email: { $in: emails } }).session(dbSession).lean();
-                notificationPayload = {
+                notificationPayloads.push({
                     userIds: users.map((u) => u._id.toString()),
                     title: event.title,
                     slug: event.slug,
-                };
+                });
             }
 
             await Booking.deleteMany({ eventId }).session(dbSession);
@@ -341,7 +339,7 @@ export const deleteEvent = async (eventId: string): Promise<{ success: boolean; 
         revalidatePath('/events');
         revalidatePath('/');
 
-        const capturedPayload = notificationPayload;
+        const capturedPayload = notificationPayloads[0];
         if (capturedPayload) {
             try {
                 await createNotificationsForParticipants({

@@ -341,14 +341,15 @@ export const deleteEvent = async (eventId: string): Promise<{ success: boolean; 
         revalidatePath('/events');
         revalidatePath('/');
 
-        if (notificationPayload) {
+        const capturedPayload = notificationPayload;
+        if (capturedPayload) {
             try {
                 await createNotificationsForParticipants({
-                    participantUserIds: notificationPayload!.userIds,
+                    participantUserIds: capturedPayload.userIds,
                     type: 'event_deleted',
-                    message: `"${notificationPayload!.title}" has been cancelled.`,
+                    message: `"${capturedPayload.title}" has been cancelled.`,
                     eventId,
-                    eventSlug: notificationPayload!.slug,
+                    eventSlug: capturedPayload.slug,
                 });
             } catch (e) {
                 console.error('Failed to create deletion notifications:', e);

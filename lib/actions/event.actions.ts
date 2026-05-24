@@ -153,9 +153,8 @@ export const createEvent = async (prevState: CreateEventState, formData: FormDat
             slotsBooked: 0, // Default to 0
             organizerId: String(organizerId),
         });
-        
-        revalidatePath('/');    
-        return { 
+        revalidatePath('/');
+        return {
             errors: null,
             success: true, 
             message: 'Event created successfully',
@@ -179,6 +178,20 @@ export const createEvent = async (prevState: CreateEventState, formData: FormDat
     }
 }
 
+
+export const getFeaturedEvents = async () => {
+    await connectDB();
+    const events = await Event.find().sort({ createdAt: -1 }).limit(5).lean();
+    return events.map((e) => ({
+        _id: e._id.toString(),
+        title: e.title,
+        slug: e.slug,
+        image: e.image,
+        location: e.location,
+        date: e.date,
+        time: e.time,
+    }));
+};
 
 export const getSimilarEventsBySlug = async (slug: string) => {
     try{

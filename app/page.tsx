@@ -1,13 +1,14 @@
+import { cacheLife } from "next/cache";
 import ExploreButton from "@/components/ui/Button/ExploreButton"
 import EventCard from "@/components/ui/EventCard"
-import { IEvent } from "@/database/event.model"
-import { cacheLife } from "next/cache";
+import { getFeaturedEvents } from "@/lib/actions/event.actions"
+
 async function Home() {
   'use cache';
   cacheLife('hours');
-  const response= await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events`);
-  const {events}= await response.json();
- 
+
+  const events = await getFeaturedEvents();
+
   return (
     <section>
       <h1 className="text-center">The Hub for every event <br/> you can&apos;t miss</h1>
@@ -18,7 +19,7 @@ async function Home() {
       <div className="mt-20 space-y-7">
         <h3>Featured Events</h3>
         <ul className="events">
-          {events && events.length > 0 && events.map((event:IEvent)=>(
+          {events && events.length > 0 && events.map((event) => (
             <li key={event.title} className="list-none">
               <EventCard title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} />
             </li>

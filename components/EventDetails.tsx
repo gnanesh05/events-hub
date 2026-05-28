@@ -125,7 +125,7 @@ const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
         <div className="events">
           {
             similarEvents.length > 0 && similarEvents.map((event:IEvent)=>(
-              <EventCard key={event._id.toString()} title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} />
+              <EventCard key={event._id.toString()} title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} mode={event.mode} />
             ))
           }
         </div>

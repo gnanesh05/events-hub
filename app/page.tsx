@@ -21,7 +21,7 @@ async function Home() {
         <ul className="events">
           {events && events.length > 0 && events.map((event) => (
             <li key={event.title} className="list-none">
-              <EventCard title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} />
+              <EventCard title={event.title} image={event.image} slug={event.slug} location={event.location} date={event.date} time={event.time} mode={event.mode} />
             </li>
           ))}
         </ul>

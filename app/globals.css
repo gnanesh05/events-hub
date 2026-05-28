@@ -206,26 +206,44 @@
     @apply grid md:grid-cols-3 gap-10 sm:grid-cols-2 grid-cols-1;
   }
 
-  #event-card {
-    @apply flex flex-col gap-3;
+  .event-card {
+    @apply flex flex-col gap-3 rounded-xl transition-all duration-300 cursor-pointer;
+
+    &:hover {
+      @apply -translate-y-1;
+      box-shadow: 0 12px 40px -4px rgba(89, 222, 202, 0.18);
+    }
+
+    .poster-wrapper {
+      @apply relative overflow-hidden rounded-xl;
+    }
 
     .poster {
-      @apply h-[300px] w-full rounded-lg object-cover;
+      @apply h-[300px] w-full object-cover transition-transform duration-500;
     }
 
-    .title {
-      @apply text-[20px] font-semibold line-clamp-1;
+    &:hover .poster {
+      @apply scale-105;
     }
 
-    p {
-      @apply  text-sm font-light;
+    .mode-badge {
+      @apply absolute bottom-3 left-3 px-2.5 py-1 rounded-full text-xs font-medium
+        bg-black/60 text-foreground/90 backdrop-blur-sm border border-white/10 capitalize;
     }
 
-    .datetime {
+    .card-title {
+      @apply text-xl font-semibold line-clamp-2;
+    }
+
+    .card-meta {
+      @apply text-meta flex flex-row items-center gap-2;
+    }
+
+    .card-datetime {
       @apply flex flex-row flex-wrap items-center gap-4;
 
       div {
-        @apply flex flex-row gap-2;
+        @apply text-meta flex flex-row gap-2;
       }
     }
   }

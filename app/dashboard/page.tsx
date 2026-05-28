@@ -92,6 +92,7 @@ export default async function DashboardPage({ searchParams }: Props) {
                   location={event.location}
                   date={event.date}
                   time={event.time}
+                  mode={event.mode}
                 />
               </li>
             ))}

@@ -190,6 +190,7 @@ export const getFeaturedEvents = async () => {
         location: e.location,
         date: e.date,
         time: e.time,
+        mode: e.mode,
     }));
 };
 

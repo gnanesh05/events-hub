@@ -106,6 +106,33 @@
   box-shadow: 0px 4px 40px 0px #00000066;
 }
 
+/* Typography utilities */
+@utility text-meta {
+  @apply text-sm text-foreground/60 font-light;
+}
+
+@utility text-caption {
+  @apply text-xs text-foreground/40 tracking-wide;
+}
+
+@utility page-subtitle {
+  @apply text-foreground/60 text-lg max-sm:text-base mt-4;
+}
+
+/* Sci-fi label style — for section labels, dashboard subtitles */
+@utility futuristic-label {
+  @apply text-xs font-medium uppercase tracking-[0.2em] text-primary/70;
+}
+
+/* Spacing utilities */
+@utility section-gap {
+  @apply flex flex-col gap-8;
+}
+
+@utility content-gap {
+  @apply flex flex-col gap-6;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -116,15 +143,23 @@
   }
 
   main {
-    @apply mx-auto container flex flex-col sm:px-10 px-5 py-10;
+    @apply mx-auto container flex flex-col sm:px-10 px-5 py-16;
   }
 
   h1 {
     @apply text-gradient text-6xl font-semibold max-sm:text-4xl;
   }
 
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
   h3 {
-    @apply font-schibsted-grotesk text-2xl font-bold;
+    @apply text-xl font-semibold;
+  }
+
+  h4 {
+    @apply text-base font-medium text-foreground/70;
   }
 
   ul {
@@ -171,26 +206,44 @@
     @apply grid md:grid-cols-3 gap-10 sm:grid-cols-2 grid-cols-1;
   }
 
-  #event-card {
-    @apply flex flex-col gap-3;
+  .event-card {
+    @apply flex flex-col gap-3 rounded-xl transition-all duration-300 cursor-pointer;
+
+    &:hover {
+      @apply -translate-y-1;
+      box-shadow: 0 12px 40px -4px rgba(89, 222, 202, 0.18);
+    }
+
+    .poster-wrapper {
+      @apply relative overflow-hidden rounded-xl;
+    }
 
     .poster {
-      @apply h-[300px] w-full rounded-lg object-cover;
+      @apply h-[300px] w-full object-cover transition-transform duration-500;
     }
 
-    .title {
-      @apply text-[20px] font-semibold line-clamp-1;
+    &:hover .poster {
+      @apply scale-105;
     }
 
-    p {
-      @apply  text-sm font-light;
+    .mode-badge {
+      @apply absolute bottom-3 left-3 px-2.5 py-1 rounded-full text-xs font-medium
+        bg-black/60 text-foreground/90 backdrop-blur-sm border border-white/10 capitalize;
     }
 
-    .datetime {
+    .card-title {
+      @apply text-xl font-semibold line-clamp-2;
+    }
+
+    .card-meta {
+      @apply text-meta flex flex-row items-center gap-2;
+    }
+
+    .card-datetime {
       @apply flex flex-row flex-wrap items-center gap-4;
 
       div {
-        @apply flex flex-row gap-2;
+        @apply text-meta flex flex-row gap-2;
       }
     }
   }
@@ -228,10 +281,6 @@
           @apply bg-dark-100 border-dark-200 card-shadow flex w-full flex-col gap-6 rounded-[10px] border px-5 py-6;
         }
       }
-    }
-
-    h2 {
-      @apply font-schibsted-grotesk text-2xl font-bold;
     }
 
     p {
@@ -276,27 +325,35 @@
     @apply text-foreground border-primary;
   }
 
+  .form-input {
+    @apply bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-3
+      text-foreground placeholder:text-foreground/40
+      focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30
+      transition-all duration-200 w-full;
+  }
+
+  .btn-primary {
+    @apply bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed
+      cursor-pointer rounded-lg px-6 py-3 text-base font-semibold text-black
+      shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-dark-200/40 hover:bg-dark-200/60 border border-gray-600/50 hover:border-gray-500/70
+      cursor-pointer rounded-lg px-6 py-3 text-base font-semibold text-foreground
+      transition-all duration-200;
+  }
+
+  .btn-destructive {
+    @apply border border-red-500/40 text-red-400 bg-red-500/10 hover:bg-red-500/20
+      cursor-pointer rounded-lg px-4 py-2 text-sm font-medium transition-colors;
+  }
+
   .pill {
     @apply bg-dark-100 text-light-100 text-xs rounded-[6px] px-5 py-2;
   }
 
   #book-event {
     @apply flex flex-col gap-6;
-
-    form {
-      @apply flex flex-col gap-6;
-
-      div {
-        @apply flex flex-col gap-2;
-
-        input {
-          @apply bg-dark-200 rounded-[6px] px-5 py-2.5;
-        }
-      }
-
-      button {
-        @apply bg-primary hover:bg-primary/90 w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black;
-      }
-    }
   }
 }

@@ -53,7 +53,7 @@ const BookEvent = ({eventId, slotsBooked, bookingSlots, slug}:{eventId:string, s
                         }
                     </p>
                     <form onSubmit={handleSubmit}>
-                        <button type="submit" disabled={isLoading} className="button-submit">{isLoading ? 'Registering...' : 'Register'}</button>
+                        <button type="submit" disabled={isLoading} className="btn-primary w-full">{isLoading ? 'Registering...' : 'Register'}</button>
                     </form>
                 </div>
             )

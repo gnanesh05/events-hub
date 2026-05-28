@@ -10,8 +10,10 @@ interface EventCardProps {
   location: string
   date: string
   time: string
+  mode?: string
 }
-const EventCard = ({title, image, slug, location, date, time}: EventCardProps) => {
+
+const EventCard = ({ title, image, slug, location, date, time, mode }: EventCardProps) => {
   const handleEventClick = () => {
     posthog.capture('event_card_clicked', {
       event_title: title,
@@ -22,23 +24,26 @@ const EventCard = ({title, image, slug, location, date, time}: EventCardProps) =
   };
 
   return (
-    <Link href={decodeURIComponent(`/events/${slug}`)} id="event-card" onClick={handleEventClick}>
+    <Link href={decodeURIComponent(`/events/${slug}`)} className="event-card group" onClick={handleEventClick}>
+      <div className="poster-wrapper">
         <Image src={image} alt={title} width={410} height={300} className="poster" />
-        <div className="flex flex-row gap-2 text-gray-50">
-            <Image src="/icons/pin.svg" alt="location" width={14} height={14} />
-            <p>{location}</p>
+        {mode && <span className="mode-badge">{mode}</span>}
+      </div>
+      <div className="card-meta">
+        <Image src="/icons/pin.svg" alt="location" width={14} height={14} />
+        <span>{location}</span>
+      </div>
+      <p className="card-title">{title}</p>
+      <div className="card-datetime">
+        <div>
+          <Image src="/icons/calendar.svg" alt="date" width={14} height={14} />
+          <span>{date}</span>
         </div>
-        <p className="title">{title}</p>
-        <div className="datetime">
-            <div>
-                <Image src="/icons/calendar.svg" alt="date" width={14} height={14} />
-                <p>{date}</p>
-            </div>
-            <div>
-                <Image src="/icons/clock.svg" alt="time" width={14} height={14} />
-                <p>{time}</p>
-            </div>
+        <div>
+          <Image src="/icons/clock.svg" alt="time" width={14} height={14} />
+          <span>{time}</span>
         </div>
+      </div>
     </Link>
   )
 }

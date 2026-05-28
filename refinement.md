@@ -23,7 +23,7 @@
 ---
 
 ## Phase 1 — Design Foundation
-> **Status: [ ] Not started**
+> **Status: [~] In progress**
 
 Build the visual system everything else inherits from.
 
@@ -99,11 +99,12 @@ Highest visual impact. This is what users see most.
 
 ---
 
-## Phase 4 — Hero Section
+## Phase 4 — Hero Section & Homepage Animations
 > **Status: [ ] Not started**
 
 ### Current Issues
 - Too static, weak CTA emphasis, content too wide
+- Featured events section appears immediately — no scroll drama
 
 ### Improvements
 - Constrain headline to `max-w-3xl`
@@ -114,6 +115,18 @@ Highest visual impact. This is what users see most.
 ### Futuristic Additions
 - Animated tag cloud or category pills below CTA
 - Subtle grid/scanline texture overlay on hero section
+
+### GSAP Animations (hero → featured events)
+- Hero section fills full viewport height (`min-h-screen`)
+- Featured events section starts off-screen below
+- On scroll: featured events section glides up (GSAP ScrollTrigger `scrub`)
+- Possible additions:
+  - Hero headline: staggered word/character entrance on load
+  - Event cards: staggered fade-in as they enter viewport
+  - Parallax depth on Prism background vs content layers
+- Library: `gsap` + `@gsap/react` + `ScrollTrigger` plugin
+- Keep animations inside a client component wrapper — server components stay clean
+- Respect `prefers-reduced-motion` — disable animations if user has reduced motion set
 
 ---
 

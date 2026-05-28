@@ -29,7 +29,7 @@ export default function LoginForm() {
     return (
         <div className="flex flex-col items-center justify-center min-h-[60vh]">
             <div className="w-full max-w-md">
-                <h1 className="text-3xl font-bold mb-6 text-center">Login</h1>
+                <h1 className="text-gradient text-3xl font-bold mb-6 text-center">Login</h1>
                 
                 <form className="flex flex-col gap-4" action={formAction}>
                     {state.message && !state.success && (
@@ -49,7 +49,7 @@ export default function LoginForm() {
                             name="email"
                             required
                             placeholder="Enter your email"
-                            className="bg-dark-200 rounded-[6px] px-5 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="form-input"
                         />
                         {state.errors?.email && (
                             <p className="text-sm text-red-500">{state.errors.email}</p>
@@ -66,7 +66,7 @@ export default function LoginForm() {
                             name="password"
                             required
                             placeholder="Enter your password"
-                            className="bg-dark-200 rounded-[6px] px-5 py-2.5 text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                            className="form-input"
                         />
                         {state.errors?.password && (
                             <p className="text-sm text-red-500">{state.errors.password}</p>
@@ -76,7 +76,7 @@ export default function LoginForm() {
                     <button
                         type="submit"
                         disabled={isPending}
-                        className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed w-full cursor-pointer items-center justify-center rounded-[6px] px-4 py-2.5 text-lg font-semibold text-black mt-2"
+                        className="btn-primary w-full mt-2"
                     >
                         {isPending ? 'Loading...' : 'Login'}
                     </button>

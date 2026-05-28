@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { auth } from '@/lib/auth';
 import { headers } from 'next/headers';
 import { getRegisteredEvents, getOrganizerEvents, DashboardEvent } from '@/lib/actions/dashboard.actions';
-
 import EventCard from '@/components/ui/EventCard';
 import OrganizerDashboard from '@/components/dashboard/OrganizerDashboard';
+import PageHeader from '@/components/ui/PageHeader';
 
 type Tab = 'upcoming' | 'past';
 
@@ -39,8 +39,7 @@ export default async function DashboardPage({ searchParams }: Props) {
 
     return (
       <section>
-        <h1 className="text-center">My Events</h1>
-        <h4 className="text-center mt-5 font-bold">Events you&apos;ve created</h4>
+        <PageHeader title="My Events" subtitle="Events you've created" />
 
         <div className="flex justify-center gap-6 mt-10">
           <Link href="?tab=upcoming" className={`tab-link ${activeTab === 'upcoming' ? 'tab-active' : ''}`}>
@@ -68,8 +67,7 @@ export default async function DashboardPage({ searchParams }: Props) {
 
   return (
     <section>
-      <h1 className="text-center">My Events</h1>
-      <h4 className="text-center mt-5 font-bold">Events you&apos;ve registered for</h4>
+      <PageHeader title="My Events" subtitle="Events you've registered for" />
 
       <div className="flex justify-center gap-6 mt-10">
         <Link href="?tab=upcoming" className={`tab-link ${activeTab === 'upcoming' ? 'tab-active' : ''}`}>

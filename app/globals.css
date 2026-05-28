@@ -106,6 +106,33 @@
   box-shadow: 0px 4px 40px 0px #00000066;
 }
 
+/* Typography utilities */
+@utility text-meta {
+  @apply text-sm text-foreground/60 font-light;
+}
+
+@utility text-caption {
+  @apply text-xs text-foreground/40 tracking-wide;
+}
+
+@utility page-subtitle {
+  @apply text-foreground/60 text-lg max-sm:text-base mt-4;
+}
+
+/* Sci-fi label style — for section labels, dashboard subtitles */
+@utility futuristic-label {
+  @apply text-xs font-medium uppercase tracking-[0.2em] text-primary/70;
+}
+
+/* Spacing utilities */
+@utility section-gap {
+  @apply flex flex-col gap-8;
+}
+
+@utility content-gap {
+  @apply flex flex-col gap-6;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -123,8 +150,16 @@
     @apply text-gradient text-6xl font-semibold max-sm:text-4xl;
   }
 
+  h2 {
+    @apply text-2xl font-semibold tracking-tight;
+  }
+
   h3 {
-    @apply font-schibsted-grotesk text-2xl font-bold;
+    @apply text-xl font-semibold;
+  }
+
+  h4 {
+    @apply text-base font-medium text-foreground/70;
   }
 
   ul {
@@ -228,10 +263,6 @@
           @apply bg-dark-100 border-dark-200 card-shadow flex w-full flex-col gap-6 rounded-[10px] border px-5 py-6;
         }
       }
-    }
-
-    h2 {
-      @apply font-schibsted-grotesk text-2xl font-bold;
     }
 
     p {

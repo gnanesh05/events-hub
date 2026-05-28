@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { searchEvents, getFilterOptions, SearchFilters } from '@/lib/actions/search.actions';
 import SearchEvents from '@/components/search/SearchEvents';
+import PageHeader from '@/components/ui/PageHeader';
 
 interface Props {
   searchParams: Promise<Record<string, string>>;
@@ -48,8 +49,7 @@ async function EventsResults({ searchParams }: Props) {
 export default function EventsPage({ searchParams }: Props) {
   return (
     <section>
-      <h1 className="text-center">Explore All Events</h1>
-      <p className="text-center mt-5">Browse workshops, hackathons, conferences and more</p>
+      <PageHeader title="Explore All Events" subtitle="Browse workshops, hackathons, conferences and more" />
 
       <Suspense fallback={<EventsResultsSkeleton />}>
         <EventsResults searchParams={searchParams} />

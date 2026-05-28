@@ -1,4 +1,5 @@
 import { IEvent } from '@/database/event.model';
+import Event from '@/database/event.model';
 import { getSimilarEventsBySlug } from '@/lib/actions/event.actions';
 import { notFound } from 'next/navigation';
 import Image from 'next/image';
@@ -7,8 +8,9 @@ import EventCard from '@/components/ui/EventCard';
 import { auth } from '@/lib/auth';
 import { hasUserBookedEvent } from '@/lib/actions/booking.actions';
 import { headers } from 'next/headers';
-import { ImCool, ImSad } from "react-icons/im";
+import { ImSad } from "react-icons/im";
 import CancelBooking from '@/components/ui/CancelBooking';
+import { connectDB } from '@/lib/mongodb';
 
 const EventDetailItem = ({icon, label, alt}:{icon:string, label:string, alt:string}) => {
     return (
@@ -45,30 +47,10 @@ const EventDetailItem = ({icon, label, alt}:{icon:string, label:string, alt:stri
   
 const EventDetails = async ({params}:{params:Promise<{slug:string}>}) => {
     const {slug} = await params;
-    let event;
-    try{
-      const request= await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/events/${slug}`,{
-        next: {
-          revalidate: 60,
-        },
-      });
-      if(!request.ok){
-        if(request.status === 404){
-          return notFound();
-        }
-        throw new Error('Failed to fetch event details');
-      }
-      const response = await request.json();
-      event= response.event;
-  
-      if(!event){
-        return notFound();
-      }
-    }
-    catch(error){
-      console.error('Error fetching event details:', error);
-      return notFound();
-    }
+
+    await connectDB();
+    const event = await Event.findOne({ slug }).lean();
+    if (!event) return notFound();
    
     const session = await auth.api.getSession({
       headers: await headers()

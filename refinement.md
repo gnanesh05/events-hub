@@ -23,7 +23,7 @@
 ---
 
 ## Phase 1 — Design Foundation
-> **Status: [ ] Not started**
+> **Status: [~] In progress**
 
 Build the visual system everything else inherits from.
 

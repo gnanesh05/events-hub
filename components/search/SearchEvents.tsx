@@ -65,7 +65,12 @@ const SearchEvents = ({ events, filterOptions }: Props) => {
 
   useEffect(() => {
     debouncedSearch(inputValue);
-  }, [inputValue, debouncedSearch]);
+    // intentionally omitting debouncedSearch — it recreates on every URL change
+    // (searchParams → updateParam → debouncedSearch), which would re-fire this
+    // effect on every filter interaction, causing a second router.replace cascade.
+    // The effect should only run when the user types (inputValue changes).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue]);
 
   // Sync input if URL param is cleared externally (e.g. clear all)
   useEffect(() => {

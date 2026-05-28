@@ -107,7 +107,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     type="text" id="title" name="title" required
                     defaultValue={val('title') as string}
                     placeholder="Enter event title"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   />
                   {state.errors?.title && <p className="text-sm text-red-500">{state.errors.title[0]}</p>}
                 </div>
@@ -118,7 +118,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     id="description" name="description" required rows={4}
                     defaultValue={val('description') as string}
                     placeholder="Enter event description"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 resize-none transition-all duration-200"
+                    className="form-input resize-none"
                   />
                   {state.errors?.description && <p className="text-sm text-red-500">{state.errors.description[0]}</p>}
                 </div>
@@ -129,7 +129,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     id="overview" name="overview" required rows={4}
                     defaultValue={val('overview') as string}
                     placeholder="Enter event overview"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 resize-none transition-all duration-200"
+                    className="form-input resize-none"
                   />
                   {state.errors?.overview && <p className="text-sm text-red-500">{state.errors.overview[0]}</p>}
                 </div>
@@ -144,7 +144,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                   <input
                     type="file" id="image" name="image" accept="image/*"
                     {...(!isEdit && { required: true })}
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary/20 file:text-primary hover:file:bg-primary/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input file:mr-4 file:py-1 file:px-3 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary/20 file:text-primary hover:file:bg-primary/30"
                   />
                   {state.errors?.image && <p className="text-sm text-red-500">{state.errors.image[0]}</p>}
                 </div>
@@ -160,7 +160,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     id="agenda" name="agenda" required rows={5}
                     defaultValue={val('agenda') as string}
                     placeholder="Enter agenda items, one per line"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 resize-none transition-all duration-200"
+                    className="form-input resize-none"
                   />
                   {state.errors?.agenda && <p className="text-sm text-red-500">{state.errors.agenda[0]}</p>}
                 </div>
@@ -171,7 +171,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     type="text" id="tags" name="tags" required
                     defaultValue={val('tags') as string}
                     placeholder="Enter tags separated by commas"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   />
                   {state.errors?.tags && <p className="text-sm text-red-500">{state.errors.tags[0]}</p>}
                 </div>
@@ -190,7 +190,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     <input
                       type="date" id="date" name="date" required
                       defaultValue={val('date') as string}
-                      className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                      className="form-input"
                     />
                     {state.errors?.date && <p className="text-sm text-red-500">{state.errors.date[0]}</p>}
                   </div>
@@ -199,7 +199,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     <input
                       type="time" id="time" name="time" required
                       defaultValue={val('time') as string}
-                      className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                      className="form-input"
                     />
                     {state.errors?.time && <p className="text-sm text-red-500">{state.errors.time[0]}</p>}
                   </div>
@@ -210,7 +210,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                   <select
                     id="mode" name="mode" required
                     defaultValue={val('mode') as string}
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   >
                     <option value="">Select mode</option>
                     <option value="online">Online</option>
@@ -226,7 +226,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     type="text" id="venue" name="venue" required
                     defaultValue={val('venue') as string}
                     placeholder="Enter venue name"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   />
                   {state.errors?.venue && <p className="text-sm text-red-500">{state.errors.venue[0]}</p>}
                 </div>
@@ -237,7 +237,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     type="text" id="location" name="location" required
                     defaultValue={val('location') as string}
                     placeholder="Enter event location"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   />
                   {state.errors?.location && <p className="text-sm text-red-500">{state.errors.location[0]}</p>}
                 </div>
@@ -253,7 +253,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     type="text" id="organizer" name="organizer" required
                     defaultValue={val('organizer') as string}
                     placeholder="Enter organizer name"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   />
                   {state.errors?.organizer && <p className="text-sm text-red-500">{state.errors.organizer[0]}</p>}
                 </div>
@@ -264,7 +264,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                     type="text" id="audience" name="audience" required
                     defaultValue={val('audience') as string}
                     placeholder="Enter target audience"
-                    className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                    className="form-input"
                   />
                   {state.errors?.audience && <p className="text-sm text-red-500">{state.errors.audience[0]}</p>}
                 </div>
@@ -281,7 +281,7 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
                       type="number" id="bookingSlots" name="bookingSlots" required min="1"
                       defaultValue={val('bookingSlots') as number}
                       placeholder="Total slots"
-                      className="bg-dark-200/40 backdrop-blur-sm border border-gray-600/50 rounded-lg px-4 py-2.5 text-foreground placeholder:text-foreground/40 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/30 transition-all duration-200"
+                      className="form-input"
                     />
                     {state.errors?.bookingSlots && <p className="text-sm text-red-500">{state.errors.bookingSlots[0]}</p>}
                   </div>
@@ -294,14 +294,14 @@ const CreateEventForm = ({ mode = 'create', defaultValues, serverAction }: Props
             <button
               type="button"
               onClick={() => router.push(isEdit ? '/dashboard' : '/')}
-              className="bg-dark-200/40 backdrop-blur-sm hover:bg-dark-200/60 border border-gray-600/50 hover:border-gray-500/70 cursor-pointer items-center justify-center rounded-lg px-6 py-3 text-base font-semibold text-foreground transition-all duration-200"
+              className="btn-secondary"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isPending}
-              className="bg-primary hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer items-center justify-center rounded-lg px-6 py-3 text-base font-semibold text-black shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-200"
+              className="btn-primary"
             >
               {isPending ? (isEdit ? 'Updating...' : 'Creating...') : (isEdit ? 'Update Event' : 'Create Event')}
             </button>

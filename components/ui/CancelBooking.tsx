@@ -23,7 +23,7 @@ const CancelBooking = ({ eventId, slug, email }: { eventId: string; slug: string
             <div className="flex flex-row gap-3 justify-center items-center">
                 <p className="text-lg text-center">Change of mind?</p>
                 <form onSubmit={(e) => { e.preventDefault(); handleCancel(); }}>
-                    <button type="submit" disabled={isLoading} className="px-4 py-2 text-sm rounded-lg cursor-pointer border border-red-500/50 text-red-400 bg-transparent hover:bg-red-500/10 transition-colors">
+                    <button type="submit" disabled={isLoading} className="btn-destructive disabled:opacity-50">
                         {isLoading ? 'Cancelling...' : 'Cancel'}
                     </button>
                 </form>
